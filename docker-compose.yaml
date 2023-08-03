@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  kc_db:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  kc_auth:
+    image: quay.io/keycloak/keycloak:19.0.1
+    environment:
+      KEYCLOAK_ADMIN: $KEYCLOAK_ADMIN
+      KEYCLOAK_ADMIN_PASSWORD: $KEYCLOAK_ADMIN_PASSWORD
+      DB_VENDOR: POSTGRES
+      DB_ADDR: kc_db
+      DB_DATABASE: $POSTGRES_DB
+      DB_USER: $POSTGRES_USER
+      DB_SCHEMA: public
+      DB_PASSWORD: $POSTGRES_PASSWORD
+    command:
+      [
+        'start-dev'
+      ]
+    ports:
+      - 8080:8080
+
+volumes:
+  postgres_data:
+    driver: local
