@@ -7,17 +7,6 @@ import reportWebVitals from "./reportWebVitals";
 
 import UserService from "./services/User.service";
 
-const _axios = axios.create({ baseURL: "http://localhost:5126" });
-_axios.interceptors.request.use((config) => {
-  if (UserService.isLoggedIn()) {
-    const cb = () => {
-      config.headers.Authorization = `Bearer ${UserService.getToken()}`;
-      return Promise.resolve(config);
-    };
-    return UserService.updateToken(cb);
-  }
-});
-
 const renderApp = () =>
   ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>

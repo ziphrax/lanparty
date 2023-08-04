@@ -8,6 +8,8 @@ var openIdConnectUrl = $"{configuration["Keycloak:auth-server-url"]}"
     + $"realms/{configuration["Keycloak:realm"]}/"
     + $".well-known/openid-configuration";
 
+var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -16,6 +18,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddKeycloakAuthentication(configuration);
+
+builder.Services.AddCors(Options => {
+    Options.AddPolicy(MyAllowSpecificOrigins, builder => builder
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+});
 
 builder.Services.AddSwaggerGen(c => {
     var securityScheme = new OpenApiSecurityScheme
@@ -48,7 +57,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
